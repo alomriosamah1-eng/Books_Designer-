@@ -13,6 +13,6 @@
 - **Verification:** TypeScript passed; Expo Doctor `18/18` passed; Metro Android bundle passed (`4,806,761` bytes).
 - **Runtime:** Metro يعمل والنفق الموثق هو `exp://xj2duow-anonymous-8081.exp.direct`.
 - **Device verification:** غير منفذة؛ يلزم مراجعة Artboard والتحديد على Android فعلي.
-- **Git synchronization:** آخر commit remote هو `3a25244` قبل تغييرات Phase 5.
+- **Git synchronization:** commit `f03647a` مرفوع إلى `origin/main`، والـremote HEAD مطابق للـlocal HEAD.
 - **Open issues:** التحقق على جهاز فعلي، drag/resize/zoom غير مكتملة، و27 ثغرة npm عابرة موثقة في `KNOWN_ISSUES.md`.
 - **Next task:** تنفيذ drag/resize محدود للعناصر المحددة مع حفظ transform وتحديث Command Model.

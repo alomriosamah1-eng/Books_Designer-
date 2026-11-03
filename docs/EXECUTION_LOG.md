@@ -118,3 +118,10 @@
 - **Metro bundle:** حزمة Android بُنيت بحجم `4,806,761` بايت دون خطأ تجميع.
 - **Device verification:** لم تُنفذ؛ التصميم لم يُراجع على هاتف Android فعلي بعد.
 - **Commit/Push:** pending.
+
+## Phase 5 — Commit and GitHub Synchronization
+
+- **Commit:** `f03647a feat(canvas): add ux-aligned artboard selection`
+- **Push:** نجح إلى `origin/main`.
+- **Remote verification:** local HEAD طابق remote HEAD بعد الرفع.
+- **Working tree:** نظيف بعد الرفع.

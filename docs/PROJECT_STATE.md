@@ -12,5 +12,6 @@
 - **Verification:** TypeScript passed; Expo Doctor `18/18` passed; Metro Android bundle passed (`4,752,527` bytes).
 - **Runtime:** Metro يعمل والنفق الموثق هو `exp://xj2duow-anonymous-8081.exp.direct`.
 - **Device verification:** غير منفذة؛ يلزم فتح التطبيق من Expo Go على Android والتحقق من الإنشاء والحفظ والاسترجاع والحذف.
-- **Git synchronization:** commit المرحلة السابقة `e25d6c1` مطابق لـ`origin/main` قبل تغييرات Phase 2.
+- **Git synchronization:** commit `9d6cea1` مرفوع إلى `origin/main`، والـremote HEAD مطابق للـlocal HEAD.
+- **Open issue:** `npm audit --omit=dev` reports 27 transitive vulnerabilities؛ لا تستخدم `--force` قبل مراجعة توافق SDK 54.
 - **Next task:** ربط بطاقة المشروع بمساحة Workspace أولية ثم تعريف Document/Page domain model، بعد إغلاق ملاحظات اختبار الجهاز.

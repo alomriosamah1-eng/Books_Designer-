@@ -11,8 +11,10 @@
 | Project Library | Project Management | Implemented | Type-Checked; Expo Doctor passed; Metro bundle passed | التحقق على Android فعلياً |
 | Local Persistence | Infrastructure | Implemented | Static/Bundle verified; device persistence pending | إضافة migrations واختبار الاستعادة بعد الإغلاق القسري |
 | Workspace | Document Composition | Implemented | Type-Checked; Android bundle passed | ربط أدوات التحرير بالمستند |
-| Document/Page Model | Document Composition | Implemented | Type-Checked; Android bundle passed | إضافة عناصر الصفحة والطبقات والإصدار |
+| Document/Page Model | Document Composition | Implemented | Type-Checked; Android bundle passed | إضافة الإصدارات والعلاقات المتقدمة |
 | Page Manager | Document Composition | Implemented | Type-Checked; Android bundle passed | التحقق على Android وإعادة الترتيب لاحقاً |
+| Page Elements: Text/Image/Shape | Document Composition | Implemented | Type-Checked; Android bundle passed | Canvas تفاعلي وتحويلات فعلية لاحقاً |
+| Command Model: Undo/Redo | Application | Implemented | Type-Checked; static flow verified | توسيع الأوامر وتثبيت history بعد إعادة التشغيل |
 | Templates | Design System | Not started | Not tested | تعريف القوالب الأولية |
 | Assets | Assets & Media | Not started | Not tested | اختيار الملفات والتخزين |
 | Export | Export & Publishing | Not started | Not tested | تحديد مسار PDF المتوافق مع SDK 54 |

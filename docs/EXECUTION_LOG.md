@@ -84,3 +84,17 @@
 - **Push:** نجح إلى `origin/main`.
 - **Remote verification:** local HEAD طابق remote HEAD بعد الرفع.
 - **Working tree:** نظيف بعد الرفع.
+
+## Phase 4 — Page Elements and Command Model
+
+- **Date:** 2026-11-04
+- **Objective:** إضافة عناصر Text/Image/Shape مع حفظ SQLite وأوامر Undo/Redo.
+- **Files created:** `src/domain/elements.ts`, `src/infrastructure/elementRepository.ts`.
+- **Files modified:** `App.tsx`.
+- **Behavior:** تحديد الصفحة، إضافة عنصر نص/صورة/شكل، عرض العناصر، حذف بالضغط المطول، Undo/Redo على مستوى جلسة Workspace، وحفظ/حذف العنصر في SQLite.
+- **Persistence:** جدول `elements` مرتبط بالصفحات مع فهرس `page_id` وبيانات transform/style أولية.
+- **TypeScript:** المحاولة الأولى فشلت بخطأ TS2783 في ترتيب spread؛ تم إصلاحه وإعادة `npm run typecheck` بنجاح.
+- **Expo compatibility:** `npx expo-doctor` — `18/18 checks passed. No issues detected!`
+- **Metro bundle:** حزمة Android بُنيت بحجم `4,799,775` بايت بعد الإصلاح دون خطأ تجميع.
+- **Device verification:** لم تُنفذ؛ لا يوجد جهاز Android فعلي داخل البيئة.
+- **Commit/Push:** pending.

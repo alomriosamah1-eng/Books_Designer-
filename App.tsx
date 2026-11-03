@@ -15,6 +15,8 @@ import { createProject, deleteProject, listProjects } from './src/infrastructure
 import { publicationTypeLabel, type Project, type PublicationType } from './src/domain/projects';
 import { addPage, deletePage, getOrCreateDocument, listPages } from './src/infrastructure/documentRepository';
 import { pageLayoutLabel, type Document, type Page } from './src/domain/documents';
+import { deleteElement, listElements, saveElement } from './src/infrastructure/elementRepository';
+import { createElementDraft, elementKindIcon, elementKindLabel, emptyCommandHistory, executeCommand, invertCommand, type CommandHistory, type DesignElement, type ElementCommand, type ElementKind } from './src/domain/elements';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -219,6 +221,9 @@ type WorkspaceProps = {
 function Workspace({ project, palette, onBack }: WorkspaceProps) {
   const [document, setDocument] = useState<Document | null>(null);
   const [pages, setPages] = useState<Page[]>([]);
+  const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
+  const [elements, setElements] = useState<DesignElement[]>([]);
+  const [history, setHistory] = useState<CommandHistory>(emptyCommandHistory);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -227,7 +232,9 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
       setError(null);
       const currentDocument = await getOrCreateDocument(project.id, project.title);
       setDocument(currentDocument);
-      setPages(await listPages(currentDocument.id));
+      const currentPages = await listPages(currentDocument.id);
+      setPages(currentPages);
+      setSelectedPageId(currentPages[0]?.id ?? null);
     } catch {
       setError('تعذر فتح مساحة العمل المحلية.');
     } finally {
@@ -235,15 +242,29 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
     }
   }, [project.id, project.title]);
 
+  const loadElements = useCallback(async (pageId: string) => {
+    try {
+      setElements(await listElements(pageId));
+      setHistory(emptyCommandHistory);
+    } catch {
+      setError('تعذر قراءة عناصر الصفحة.');
+    }
+  }, []);
+
   useEffect(() => {
     void loadWorkspace();
   }, [loadWorkspace]);
+
+  useEffect(() => {
+    if (selectedPageId) void loadElements(selectedPageId);
+  }, [loadElements, selectedPageId]);
 
   async function handleAddPage() {
     if (!document) return;
     try {
       const page = await addPage(document.id, 'editorial');
       setPages((current) => [...current, page]);
+      setSelectedPageId(page.id);
     } catch {
       setError('تعذر إضافة الصفحة.');
     }
@@ -263,7 +284,11 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
           void (async () => {
             try {
               await deletePage(page.id);
-              setPages((current) => current.filter((item) => item.id !== page.id));
+              setPages((current) => {
+                const remaining = current.filter((item) => item.id !== page.id);
+                if (selectedPageId === page.id) setSelectedPageId(remaining[0]?.id ?? null);
+                return remaining;
+              });
             } catch {
               setError('تعذر حذف الصفحة.');
             }
@@ -271,6 +296,71 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
         },
       },
     ]);
+  }
+
+  async function persistCommand(command: ElementCommand) {
+    if (command.direction === 'add') await saveElement(command.element);
+    else await deleteElement(command.element.id);
+  }
+
+  async function handleAddElement(kind: ElementKind) {
+    if (!selectedPageId) return;
+    try {
+      const element = createElementDraft(selectedPageId, kind, elements.length + 1);
+      const command: ElementCommand = { id: `command-${Date.now()}`, label: `إضافة ${elementKindLabel[kind]}`, element, direction: 'add' };
+      await persistCommand(command);
+      setElements((current) => executeCommand(current, command));
+      setHistory((current) => ({ past: [...current.past, command], future: [] }));
+    } catch {
+      setError('تعذر حفظ العنصر الجديد.');
+    }
+  }
+
+  function handleDeleteElement(element: DesignElement) {
+    Alert.alert('حذف العنصر؟', `سيتم حذف «${element.name}» من الصفحة.`, [
+      { text: 'إلغاء', style: 'cancel' },
+      {
+        text: 'حذف',
+        style: 'destructive',
+        onPress: () => {
+          void (async () => {
+            try {
+              const command: ElementCommand = { id: `command-${Date.now()}`, label: `حذف ${elementKindLabel[element.kind]}`, element, direction: 'delete' };
+              await persistCommand(command);
+              setElements((current) => executeCommand(current, command));
+              setHistory((current) => ({ past: [...current.past, command], future: [] }));
+            } catch {
+              setError('تعذر حذف العنصر.');
+            }
+          })();
+        },
+      },
+    ]);
+  }
+
+  async function handleUndo() {
+    const command = history.past[history.past.length - 1];
+    if (!command) return;
+    const inverse = invertCommand(command);
+    try {
+      await persistCommand(inverse);
+      setElements((current) => executeCommand(current, inverse));
+      setHistory((current) => ({ past: current.past.slice(0, -1), future: [command, ...current.future] }));
+    } catch {
+      setError('تعذر التراجع عن آخر عملية.');
+    }
+  }
+
+  async function handleRedo() {
+    const command = history.future[0];
+    if (!command) return;
+    try {
+      await persistCommand(command);
+      setElements((current) => executeCommand(current, command));
+      setHistory((current) => ({ past: [...current.past, command], future: current.future.slice(1) }));
+    } catch {
+      setError('تعذر إعادة العملية.');
+    }
   }
 
   return (
@@ -303,7 +393,7 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
         ) : (
           <View style={styles.pageList}>
             {pages.map((page) => (
-              <Pressable key={page.id} onLongPress={() => handleDeletePage(page)} style={[styles.pageCard, { backgroundColor: palette.surface, borderColor: palette.line }]}>
+              <Pressable key={page.id} onPress={() => setSelectedPageId(page.id)} onLongPress={() => handleDeletePage(page)} style={[styles.pageCard, { backgroundColor: palette.surface, borderColor: palette.line }, selectedPageId === page.id && { borderColor: palette.accent }]}>
                 <View style={[styles.pagePreview, { backgroundColor: page.background }]}>
                   <View style={[styles.pagePreviewLine, { backgroundColor: page.layout === 'cover' ? '#D77A61' : '#24231F' }]} />
                   <View style={styles.pagePreviewLineShort} />
@@ -323,6 +413,38 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
             </Pressable>
           </View>
         )}
+
+        <View style={styles.elementsHeader}>
+          <View>
+            <Text style={[styles.sectionTitle, { color: palette.ink }]}>عناصر الصفحة</Text>
+            <Text style={[styles.sectionMeta, { color: palette.muted }]}>{elements.length} عناصر · {selectedPageId ? 'الصفحة المحددة' : 'لا توجد صفحة'}</Text>
+          </View>
+          <View style={styles.historyRow}>
+            <Pressable disabled={history.past.length === 0} onPress={() => void handleUndo()} style={[styles.historyButton, { borderColor: history.past.length ? palette.accent : palette.line }]}><Text style={{ color: history.past.length ? palette.accent : palette.muted }}>↶</Text></Pressable>
+            <Pressable disabled={history.future.length === 0} onPress={() => void handleRedo()} style={[styles.historyButton, { borderColor: history.future.length ? palette.accent : palette.line }]}><Text style={{ color: history.future.length ? palette.accent : palette.muted }}>↷</Text></Pressable>
+          </View>
+        </View>
+
+        <View style={[styles.elementToolbar, { backgroundColor: palette.surface, borderColor: palette.line }]}>
+          {(['text', 'image', 'shape'] as ElementKind[]).map((kind) => (
+            <Pressable key={kind} disabled={!selectedPageId} onPress={() => void handleAddElement(kind)} style={[styles.elementTool, { borderColor: selectedPageId ? palette.line : palette.line, opacity: selectedPageId ? 1 : 0.45 }]}>
+              <Text style={[styles.elementToolIcon, { color: palette.accent }]}>{elementKindIcon[kind]}</Text>
+              <Text style={{ color: palette.ink, fontSize: 11, fontWeight: '700' }}>{elementKindLabel[kind]}</Text>
+            </Pressable>
+          ))}
+        </View>
+
+        <View style={styles.elementList}>
+          {elements.length === 0 ? (
+            <View style={[styles.elementEmpty, { borderColor: palette.line }]}><Text style={[styles.stateText, { color: palette.muted }]}>أضف نصاً أو صورة أو شكلاً إلى الصفحة المحددة.</Text></View>
+          ) : elements.map((element) => (
+            <Pressable key={element.id} onLongPress={() => handleDeleteElement(element)} style={[styles.elementCard, { backgroundColor: palette.surface, borderColor: palette.line }]}>
+              <View style={[styles.elementIcon, { backgroundColor: element.color }]}><Text style={styles.elementIconText}>{elementKindIcon[element.kind]}</Text></View>
+              <View style={styles.elementInfo}><Text style={[styles.projectType, { color: palette.muted }]}>{elementKindLabel[element.kind]}</Text><Text style={[styles.projectTitle, { color: palette.ink }]}>{element.name}</Text><Text style={[styles.projectUpdated, { color: palette.muted }]}>اضغط مطولاً للحذف</Text></View>
+              <Text style={[styles.cardArrow, { color: palette.muted }]}>↗</Text>
+            </Pressable>
+          ))}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -385,4 +507,16 @@ const styles = StyleSheet.create({
   pagePreviewNumber: { color: '#24231F', fontSize: 10, fontWeight: '800', alignSelf: 'flex-end' },
   pageInfo: { flex: 1, paddingHorizontal: 14 },
   addPageButton: { minHeight: 62, borderRadius: 18, borderWidth: 1, borderStyle: 'dashed', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 4 },
+  elementsHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 34, marginBottom: 14 },
+  historyRow: { flexDirection: 'row', gap: 8 },
+  historyButton: { width: 38, height: 34, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
+  elementToolbar: { borderRadius: 18, borderWidth: 1, padding: 10, flexDirection: 'row', gap: 8, marginBottom: 14 },
+  elementTool: { flex: 1, minHeight: 66, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center', gap: 4 },
+  elementToolIcon: { fontSize: 23, fontWeight: '800' },
+  elementList: { gap: 10 },
+  elementEmpty: { minHeight: 80, borderRadius: 16, borderWidth: 1, borderStyle: 'dashed', alignItems: 'center', justifyContent: 'center', padding: 14 },
+  elementCard: { minHeight: 80, borderRadius: 17, borderWidth: 1, padding: 10, flexDirection: 'row', alignItems: 'center' },
+  elementIcon: { width: 54, height: 54, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  elementIconText: { color: '#24231F', fontSize: 22, fontWeight: '800' },
+  elementInfo: { flex: 1, paddingHorizontal: 12 },
 });

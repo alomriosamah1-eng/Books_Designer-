@@ -34,3 +34,10 @@
 - **Metro health:** `curl -I http://127.0.0.1:8081/` أعاد `HTTP/1.1 200 OK`.
 - **Device verification:** لم تُنفذ بعد؛ الرابط جاهز للمسح عبر Expo Go، ولا يوجد تأكيد من جهاز Android فعلي في هذه البيئة.
 - **Commit/Push:** pending.
+
+## Phase 1 — Commit and GitHub Synchronization
+
+- **Commit:** `38b060a feat(foundation): bootstrap Expo SDK 54 app`
+- **Push:** نجح إلى `origin/main`.
+- **Remote verification:** `git ls-remote origin refs/heads/main` طابق الـlocal HEAD بالكامل.
+- **Working tree:** نظيف بعد الرفع.

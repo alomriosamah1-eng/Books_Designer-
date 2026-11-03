@@ -13,4 +13,5 @@
 - **Device verification:** غير منفذة؛ يلزم مسح QR عبر Expo Go وتأكيد الفتح والتفاعل من هاتف Android.
 - **Dependencies:** مثبتة مع `package-lock.json`; `node_modules/` مستبعد من Git.
 - **Tests:** TypeScript passed; Expo Doctor passed; Metro HTTP health passed; device/runtime behavior pending.
+- **Git synchronization:** commit `38b060a` مرفوع إلى `origin/main`، والـremote HEAD مطابق للـlocal HEAD.
 - **Next task:** توثيق/تنفيذ أول نموذج Project Library وتخزين محلي، بعد تأكيد اختبار الجهاز أو تسجيل تعذره.

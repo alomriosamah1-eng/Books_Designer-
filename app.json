@@ -6,9 +6,14 @@
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "platforms": ["android"],
+    "platforms": [
+      "android"
+    ],
     "android": {
       "package": "com.booksdesigner.app"
-    }
+    },
+    "plugins": [
+      "expo-sqlite"
+    ]
   }
 }

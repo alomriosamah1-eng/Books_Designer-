@@ -41,3 +41,18 @@
 - **Push:** نجح إلى `origin/main`.
 - **Remote verification:** `git ls-remote origin refs/heads/main` طابق الـlocal HEAD بالكامل.
 - **Working tree:** نظيف بعد الرفع.
+
+## Phase 2 — Project Library and Local Persistence
+
+- **Date:** 2026-11-04
+- **Objective:** استبدال بيانات Dashboard الثابتة بمكتبة مشاريع محلية قابلة للإنشاء والاسترجاع والحذف.
+- **Files created:** `src/domain/projects.ts`, `src/infrastructure/projectRepository.ts`.
+- **Files modified:** `App.tsx`, `package.json`, `package-lock.json`, `app.json`.
+- **Dependency:** أضيف `expo-sqlite` عبر `npx expo install expo-sqlite`، وتمت إضافة config plugin تلقائياً.
+- **Behavior:** نموذج إنشاء مشروع، أنواع منشورات MVP، حفظ SQLite، استرجاع عند فتح التطبيق، حالة تحميل/فراغ/خطأ، وحذف بالضغط المطول مع تأكيد.
+- **TypeScript:** `npm run typecheck` نجح.
+- **Expo compatibility:** `npx expo-doctor` — `18/18 checks passed. No issues detected!`
+- **Metro bundle:** حزمة Android بُنيت عبر Metro بحجم `4,752,527` بايت دون خطأ تجميع.
+- **Device verification:** لم تُنفذ؛ لا يوجد جهاز Android فعلي داخل البيئة.
+- **Tunnel:** جلسة Expo ما زالت تعمل والرابط الموثق `exp://xj2duow-anonymous-8081.exp.direct`.
+- **Commit/Push:** pending.

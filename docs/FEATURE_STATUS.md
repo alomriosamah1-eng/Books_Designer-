@@ -6,9 +6,10 @@
 |---|---|---|---|---|
 | Repository & Environment Audit | Platform | Implemented | Audited | تم تسجيل حالة المستودع والبيئة |
 | Expo SDK 54 Foundation | Platform | Implemented | Type-Checked; Expo Doctor passed | لم يُختبر على جهاز Android فعلي |
-| Application Shell | Presentation | Implemented | Metro served; device pending | تطوير نظام التنقل والمكونات |
-| Premium Dashboard | Presentation | Implemented | Type-Checked; device pending | استبدال البيانات الثابتة ببيانات حقيقية لاحقاً |
-| Project Library | Project Management | Not started | Not tested | نموذج بيانات وتخزين محلي |
+| Application Shell | Presentation | Implemented | Metro served; Android bundle passed | تطوير نظام التنقل والمكونات |
+| Premium Dashboard | Presentation | Implemented | Type-Checked; Metro bundle passed | تطوير الحالات التفاعلية لاحقاً |
+| Project Library | Project Management | Implemented | Type-Checked; Expo Doctor passed; Metro bundle passed | التحقق على Android فعلياً، ثم ربط فتح المشروع بالمحرر |
+| Local Persistence | Infrastructure | Implemented | Static/Bundle verified; device persistence pending | إضافة migrations واختبار الاستعادة بعد الإغلاق القسري |
 | Document Editor | Document Composition | Not started | Not tested | نموذج المستند ومحرك العرض |
 | Templates | Design System | Not started | Not tested | تعريف القوالب الأولية |
 | Assets | Assets & Media | Not started | Not tested | اختيار الملفات والتخزين |

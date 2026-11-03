@@ -63,3 +63,17 @@
 - **Push:** نجح إلى `origin/main`.
 - **Remote verification:** local HEAD طابق remote HEAD بعد الرفع.
 - **Working tree:** نظيف بعد الرفع.
+
+## Phase 3 — Workspace and Document/Page Foundation
+
+- **Date:** 2026-11-04
+- **Objective:** فتح المشروع في Workspace أولي وتعريف Document/Page مع تخزين SQLite.
+- **Files created:** `src/domain/documents.ts`, `src/infrastructure/documentRepository.ts`.
+- **Files modified:** `App.tsx`.
+- **Behavior:** الضغط على بطاقة مشروع يفتح Workspace، ينشئ Document عند الحاجة، ينشئ غلافاً أولياً، يعرض الصفحات، يضيف صفحات تحريرية، ويحذف الصفحة مع منع حذف الصفحة الأخيرة.
+- **Persistence:** جداول `documents` و`pages` مع WAL وفهارس وقيود uniqueness داخل قاعدة `books-designer.db`.
+- **TypeScript:** `npm run typecheck` نجح.
+- **Expo compatibility:** `npx expo-doctor` — `18/18 checks passed. No issues detected!`
+- **Metro bundle:** حزمة Android بُنيت بحجم `4,776,671` بايت دون خطأ تجميع.
+- **Device verification:** لم تُنفذ؛ لا يوجد جهاز Android فعلي داخل البيئة.
+- **Commit/Push:** pending.

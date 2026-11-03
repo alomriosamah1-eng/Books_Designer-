@@ -8,9 +8,11 @@
 | Expo SDK 54 Foundation | Platform | Implemented | Type-Checked; Expo Doctor passed | لم يُختبر على جهاز Android فعلي |
 | Application Shell | Presentation | Implemented | Metro served; Android bundle passed | تطوير نظام التنقل والمكونات |
 | Premium Dashboard | Presentation | Implemented | Type-Checked; Metro bundle passed | تطوير الحالات التفاعلية لاحقاً |
-| Project Library | Project Management | Implemented | Type-Checked; Expo Doctor passed; Metro bundle passed | التحقق على Android فعلياً، ثم ربط فتح المشروع بالمحرر |
+| Project Library | Project Management | Implemented | Type-Checked; Expo Doctor passed; Metro bundle passed | التحقق على Android فعلياً |
 | Local Persistence | Infrastructure | Implemented | Static/Bundle verified; device persistence pending | إضافة migrations واختبار الاستعادة بعد الإغلاق القسري |
-| Document Editor | Document Composition | Not started | Not tested | نموذج المستند ومحرك العرض |
+| Workspace | Document Composition | Implemented | Type-Checked; Android bundle passed | ربط أدوات التحرير بالمستند |
+| Document/Page Model | Document Composition | Implemented | Type-Checked; Android bundle passed | إضافة عناصر الصفحة والطبقات والإصدار |
+| Page Manager | Document Composition | Implemented | Type-Checked; Android bundle passed | التحقق على Android وإعادة الترتيب لاحقاً |
 | Templates | Design System | Not started | Not tested | تعريف القوالب الأولية |
 | Assets | Assets & Media | Not started | Not tested | اختيار الملفات والتخزين |
 | Export | Export & Publishing | Not started | Not tested | تحديد مسار PDF المتوافق مع SDK 54 |

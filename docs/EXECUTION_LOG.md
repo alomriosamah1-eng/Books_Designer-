@@ -105,3 +105,16 @@
 - **Push:** نجح إلى `origin/main`.
 - **Remote verification:** local HEAD طابق remote HEAD بعد الرفع.
 - **Working tree:** نظيف بعد الرفع.
+
+## Phase 5 — UX-aligned Artboard Canvas
+
+- **Date:** 2026-11-04
+- **Objective:** إضافة Canvas أولي داخل Workspace يعرض عناصر الصفحة ويتيح تحديدها بصرياً.
+- **Files modified:** `App.tsx`.
+- **UX decisions applied:** Artboard مركزي بنسبة A4، أدوات محدودة خارج اللوحة، حالة تحديد واضحة، خلفية Paper، وعدم وضع Glassmorphism خلف Canvas أو محتوى طويل. السحب والتحجيم مؤجلان حتى تثبيت التحديد واللمس.
+- **Behavior:** عرض Text/Image/Shape على Artboard، Tap لتحديد العنصر، إبراز العنصر المحدد، ومزامنة التحديد مع قائمة العناصر.
+- **TypeScript:** `npm run typecheck` نجح.
+- **Expo compatibility:** `npx expo-doctor` — `18/18 checks passed. No issues detected!`
+- **Metro bundle:** حزمة Android بُنيت بحجم `4,806,761` بايت دون خطأ تجميع.
+- **Device verification:** لم تُنفذ؛ التصميم لم يُراجع على هاتف Android فعلي بعد.
+- **Commit/Push:** pending.

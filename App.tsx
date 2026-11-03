@@ -223,6 +223,7 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
   const [pages, setPages] = useState<Page[]>([]);
   const [selectedPageId, setSelectedPageId] = useState<string | null>(null);
   const [elements, setElements] = useState<DesignElement[]>([]);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [history, setHistory] = useState<CommandHistory>(emptyCommandHistory);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -245,6 +246,7 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
   const loadElements = useCallback(async (pageId: string) => {
     try {
       setElements(await listElements(pageId));
+      setSelectedElementId(null);
       setHistory(emptyCommandHistory);
     } catch {
       setError('تعذر قراءة عناصر الصفحة.');
@@ -414,6 +416,45 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
           </View>
         )}
 
+        <View style={styles.canvasSectionHeader}>
+          <View>
+            <Text style={[styles.sectionTitle, { color: palette.ink }]}>لوحة التصميم</Text>
+            <Text style={[styles.sectionMeta, { color: palette.muted }]}>Artboard · A4 · Tap to select</Text>
+          </View>
+          <View style={[styles.canvasStatus, { backgroundColor: palette.surface, borderColor: palette.line }]}><Text style={{ color: palette.muted, fontSize: 11 }}>100%</Text></View>
+        </View>
+        <View style={styles.canvasFrame}>
+          <View style={styles.artboard}>
+            {elements.map((element) => {
+              const isSelected = selectedElementId === element.id;
+              const canvasScaleX = 312 / 210;
+              const canvasScaleY = 440 / 297;
+              return (
+                <Pressable
+                  key={element.id}
+                  onPress={() => setSelectedElementId(element.id)}
+                  style={[
+                    styles.canvasElement,
+                    {
+                      left: element.x * canvasScaleX,
+                      top: element.y * canvasScaleY,
+                      width: element.width * canvasScaleX,
+                      height: element.height * canvasScaleY,
+                      backgroundColor: element.kind === 'text' ? 'transparent' : element.color,
+                      borderColor: isSelected ? '#B85C46' : element.kind === 'text' ? '#CFC7BB' : 'transparent',
+                      borderWidth: isSelected ? 2 : element.kind === 'text' ? 1 : 0,
+                    },
+                  ]}
+                >
+                  {element.kind === 'text' ? <Text style={styles.canvasText}>{element.content}</Text> : <Text style={styles.canvasPlaceholder}>{element.kind === 'image' ? 'صورة' : 'شكل'}</Text>}
+                  {isSelected && <View style={styles.selectionHandle} />}
+                </Pressable>
+              );
+            })}
+            {elements.length === 0 && <Text style={styles.canvasEmptyText}>أضف عنصراً لتبدأ التكوين</Text>}
+          </View>
+        </View>
+
         <View style={styles.elementsHeader}>
           <View>
             <Text style={[styles.sectionTitle, { color: palette.ink }]}>عناصر الصفحة</Text>
@@ -438,7 +479,7 @@ function Workspace({ project, palette, onBack }: WorkspaceProps) {
           {elements.length === 0 ? (
             <View style={[styles.elementEmpty, { borderColor: palette.line }]}><Text style={[styles.stateText, { color: palette.muted }]}>أضف نصاً أو صورة أو شكلاً إلى الصفحة المحددة.</Text></View>
           ) : elements.map((element) => (
-            <Pressable key={element.id} onLongPress={() => handleDeleteElement(element)} style={[styles.elementCard, { backgroundColor: palette.surface, borderColor: palette.line }]}>
+            <Pressable key={element.id} onPress={() => setSelectedElementId(element.id)} onLongPress={() => handleDeleteElement(element)} style={[styles.elementCard, { backgroundColor: palette.surface, borderColor: palette.line }, selectedElementId === element.id && { borderColor: palette.accent }]}>
               <View style={[styles.elementIcon, { backgroundColor: element.color }]}><Text style={styles.elementIconText}>{elementKindIcon[element.kind]}</Text></View>
               <View style={styles.elementInfo}><Text style={[styles.projectType, { color: palette.muted }]}>{elementKindLabel[element.kind]}</Text><Text style={[styles.projectTitle, { color: palette.ink }]}>{element.name}</Text><Text style={[styles.projectUpdated, { color: palette.muted }]}>اضغط مطولاً للحذف</Text></View>
               <Text style={[styles.cardArrow, { color: palette.muted }]}>↗</Text>
@@ -519,4 +560,13 @@ const styles = StyleSheet.create({
   elementIcon: { width: 54, height: 54, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   elementIconText: { color: '#24231F', fontSize: 22, fontWeight: '800' },
   elementInfo: { flex: 1, paddingHorizontal: 12 },
+  canvasSectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 34, marginBottom: 14 },
+  canvasStatus: { borderRadius: 12, borderWidth: 1, paddingHorizontal: 10, paddingVertical: 7 },
+  canvasFrame: { minHeight: 480, borderRadius: 24, backgroundColor: '#24231F', alignItems: 'center', justifyContent: 'center', padding: 20, marginBottom: 28 },
+  artboard: { width: 312, height: 440, backgroundColor: '#F7F3EC', position: 'relative', overflow: 'hidden', shadowColor: '#000', shadowOpacity: 0.25, shadowRadius: 18, shadowOffset: { width: 0, height: 8 }, elevation: 8 },
+  canvasElement: { position: 'absolute', alignItems: 'center', justifyContent: 'center' },
+  canvasText: { color: '#24231F', fontSize: 15, fontWeight: '800', textAlign: 'center' },
+  canvasPlaceholder: { color: '#24231F', fontSize: 13, fontWeight: '800' },
+  canvasEmptyText: { position: 'absolute', color: '#9A968B', fontSize: 13, fontWeight: '700' },
+  selectionHandle: { position: 'absolute', width: 8, height: 8, borderRadius: 4, backgroundColor: '#B85C46', right: -5, bottom: -5 },
 });
